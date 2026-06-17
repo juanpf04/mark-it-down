@@ -1,6 +1,6 @@
 # Conversor de Archivos a Markdown con MarkItDown
 
-Este proyecto permite convertir archivos locales como PDFs, documentos de Word (DOCX) y Excel (XLSX) a formato Markdown (`.md`) utilizando la biblioteca `markitdown` de Microsoft.
+Este proyecto permite convertir archivos locales como PDFs, documentos de Word (DOCX) y Excel (XLSX) a formato Markdown (`.md`) utilizando la biblioteca [`markitdown` de Microsoft](https://github.com/microsoft/markitdown).
 
 Existen dos formas principales de utilizar esta herramienta: un modo automatizado utilizando "Arrastrar y Soltar", y un modo directo a través del script de Python para usuarios más técnicos.
 
