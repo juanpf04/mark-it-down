@@ -1,15 +1,18 @@
 @echo off
 setlocal
 
-:: Verificar si se proporcionó un archivo (Drag & Drop)
-if "%~1"=="" (
-    echo No se proporciono ningun archivo. Por favor, arrastra un archivo sobre este script.
-    pause
-    exit /b
-)
+:: Wrapper para Drag & Drop / CLI hacia el script de Python
 
 :: Obtener el directorio donde se encuentra este archivo .bat
 set "BAT_DIR=%~dp0"
+
+:: Verificar si existe el ejecutable generado por pyinstaller
+if exist "%BAT_DIR%convert.exe" (
+    "%BAT_DIR%convert.exe" %*
+    exit /b
+)
+
+:: Si no existe el exe, usar Python
 set "VENV_DIR=%BAT_DIR%venv"
 
 :: Verificar si el entorno virtual (venv) ya existe
@@ -22,11 +25,11 @@ if not exist "%VENV_DIR%\Scripts\activate.bat" (
         exit /b
     )
     
-    echo [INFO] Instalando markitdown...
+    echo [INFO] Instalando dependencias...
     call "%VENV_DIR%\Scripts\activate.bat"
-    pip install "markitdown[all]"
+    pip install -r "%BAT_DIR%requirements.txt"
     if errorlevel 1 (
-        echo [ERROR] Ocurrio un error al instalar markitdown.
+        echo [ERROR] Ocurrio un error al instalar las dependencias.
         pause
         exit /b
     )
@@ -34,12 +37,7 @@ if not exist "%VENV_DIR%\Scripts\activate.bat" (
     call "%VENV_DIR%\Scripts\activate.bat"
 )
 
-:: Ejecutar el script de conversion pasando la ruta absoluta del archivo
-python "%BAT_DIR%convert.py" "%~1"
-
-:: Pausar solo si hubo algun error, para que la ventana se cierre rapido si todo sale bien
-if errorlevel 1 (
-    pause
-)
+:: Ejecutar el script de conversion pasando todos los argumentos
+python "%BAT_DIR%convert.py" %*
 
 endlocal
