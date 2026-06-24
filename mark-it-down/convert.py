@@ -22,12 +22,11 @@ def get_unique_filename(output_path):
 def main():
     interactive = False
     
-    # Check if run without arguments (Double Click mode)
+    # Modo Interactivo (Doble Clic)
     if len(sys.argv) == 1:
         interactive = True
         print("=== MarkItDown Local Converter ===")
         input_file = input("Introduce o arrastra la ruta del archivo a convertir:\n> ").strip()
-        # Clean quotes if dragged into the terminal
         input_file = input_file.strip('"').strip("'")
         
         output_file = input("\nIntroduce la ruta de salida (o presiona Enter para usar el mismo directorio):\n> ").strip()
@@ -35,11 +34,11 @@ def main():
         
         if not input_file:
             print("No se proporcionó ningún archivo.")
-            os.system("pause")
+            input("\nPresiona Enter para salir...")
             sys.exit(1)
             
+    # Modo CLI / Arrastrar y Soltar
     else:
-        # CLI / Drag & Drop mode
         parser = argparse.ArgumentParser(description="Convert files to Markdown using MarkItDown.")
         parser.add_argument("input", help="Path to the input file")
         parser.add_argument("-o", "--output", help="Path to the output file (optional)")
@@ -51,12 +50,12 @@ def main():
     if not os.path.isfile(input_file):
         print(f"\nError: No se encontró el archivo '{input_file}'.")
         if interactive:
-            os.system("pause")
+            input("\nPresiona Enter para salir...")
         else:
             time.sleep(3)
         sys.exit(1)
 
-    # Determine output path
+    # Determinar ruta de salida si no se proporcionó
     if not output_file:
         base_name = os.path.splitext(os.path.basename(input_file))[0]
         directory = os.path.dirname(os.path.abspath(input_file))
@@ -64,18 +63,15 @@ def main():
     elif not output_file.lower().endswith('.md'):
         output_file += ".md"
 
-    # Ensure output filename is absolute if it's not
     output_file = os.path.abspath(output_file)
-
-    # Ensure uniqueness
     output_file = get_unique_filename(output_file)
 
     print(f"\nConvirtiendo '{input_file}' a Markdown...")
     try:
         md = MarkItDown()
-        result = md.convert(input_file)
+        result = md.convert_local(input_file)
         
-        # Ensure output directory exists if specified
+        # Crear directorio de salida si no existe
         output_dir = os.path.dirname(output_file)
         if output_dir and not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -87,17 +83,16 @@ def main():
     except Exception as e:
         print(f"\nError durante la conversión: {e}")
         if interactive:
-            os.system("pause")
+            input("\nPresiona Enter para salir...")
         else:
             time.sleep(3)
         sys.exit(1)
 
-    # Success pause behavior
     if interactive:
         print("")
-        os.system("pause")
+        input("\nPresiona Enter para salir...")
     else:
-        # Give user time to read the success message in D&D / CLI mode
+        # Pausa para permitir lectura del mensaje en modo silencioso
         time.sleep(3)
 
 if __name__ == "__main__":

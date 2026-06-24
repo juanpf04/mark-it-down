@@ -67,5 +67,21 @@ Si el ejecutable no se genera, los usuarios pueden usar directamente el archivo 
 
 ---
 
+## 🛡 Recomendaciones y Seguridad
+
+Es importante elegir la herramienta adecuada según el archivo y el entorno:
+
+1. **Para archivos PDF:**
+   - **Recomendado:** Utilizar la versión **Stirling PDF API** (`pdf-tools/`). Al ser la herramienta corporativa, es mucho más segura, robusta y funciona de manera más consistente con la mayoría de los documentos PDF.
+   - *Excepción:* Si el PDF contiene tablas complejas que se distorsionan, MarkItDown (`mark-it-down/`) suele ofrecer un mejor rendimiento en la extracción de datos tabulares a Markdown.
+
+2. **Para Word, Excel y Outlook:**
+   - **Recomendado:** Utilizar la versión **MarkItDown** (`mark-it-down/`).
+
+**Consideraciones de Seguridad (MarkItDown)**:
+La librería MarkItDown realiza operaciones de E/S con los mismos privilegios del usuario que ejecuta el proceso. Para garantizar la seguridad, el código de Python se ha configurado utilizando estrictamente la API `convert_local()`. Esto asegura que la herramienta se limita a procesar los archivos locales indicados de forma estrecha y controlada, evitando la ingesta remota de URLs o flujos de bytes de origen desconocido. Aún así, te recomendamos utilizar MarkItDown siempre con archivos de fuentes de confianza.
+
+---
+
 ## Nombres Automáticos Seguros
 Si ejecutas cualquier de las dos herramientas y no proporcionas un nombre de salida (`-o`), el archivo `.md` se generará en el mismo directorio del archivo original, y con su mismo nombre base. Si dicho archivo `.md` ya existiese en el destino, las herramientas añadirán automáticamente un número al final (ej. `archivo (1).md`) para prevenir la sobrescritura y pérdida de datos accidental.

@@ -15,7 +15,7 @@ function Get-UniqueFilename {
         [string]$Path
     )
     
-    if (-Not (Test-Path $Path)) {
+    if (-Not (Test-Path -LiteralPath $Path)) {
         return $Path
     }
     
@@ -30,7 +30,7 @@ function Get-UniqueFilename {
     $counter = 1
     while ($true) {
         $newPath = Join-Path -Path $directory -ChildPath "$baseName ($counter)$extension"
-        if (-Not (Test-Path $newPath)) {
+        if (-Not (Test-Path -LiteralPath $newPath)) {
             return $newPath
         }
         $counter++
@@ -55,13 +55,13 @@ if ([string]::IsNullOrEmpty($InputPath)) {
     }
 }
 
-if (-Not (Test-Path $InputPath -PathType Leaf)) {
+if (-Not (Test-Path -LiteralPath $InputPath -PathType Leaf)) {
     Write-Host "`nError: No se encontró el archivo '$InputPath'." -ForegroundColor Red
     if ($interactive) { pause } else { Start-Sleep -Seconds 3 }
     exit 1
 }
 
-$InputPath = (Resolve-Path $InputPath).Path
+$InputPath = (Get-Item -LiteralPath $InputPath).FullName
 
 if ([string]::IsNullOrEmpty($OutputFile)) {
     $directory = [System.IO.Path]::GetDirectoryName($InputPath)
@@ -71,7 +71,7 @@ if ([string]::IsNullOrEmpty($OutputFile)) {
     $OutputFile += ".md"
 }
 
-# Ensure output is absolute
+# Asegurar que la ruta de salida es absoluta
 if (-Not [System.IO.Path]::IsPathRooted($OutputFile)) {
     $OutputFile = Join-Path -Path (Get-Location).Path -ChildPath $OutputFile
 }
@@ -87,12 +87,12 @@ try {
     }
 
     $form = @{
-        fileInput = Get-Item -Path $InputPath
+        fileInput = Get-Item -LiteralPath $InputPath
     }
 
-    # Ensure output directory exists
+    # Crear directorio de salida si no existe
     $outputDir = [System.IO.Path]::GetDirectoryName($OutputFile)
-    if (-Not (Test-Path $outputDir)) {
+    if (-Not (Test-Path -LiteralPath $outputDir)) {
         New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
     }
 
